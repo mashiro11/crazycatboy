@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class PlayerControler : MonoBehaviour {
 
+    [SerializeField]
+    public float moveSpeed;
     private Transform transform;
     // Use this for initialization
     private GameObject room;
     void Start () {
+        moveSpeed = 1f;
         transform = gameObject.GetComponent<Transform>();
 	}
 	
@@ -21,28 +24,28 @@ public class PlayerControler : MonoBehaviour {
         if (Input.GetKey(KeyCode.UpArrow))
         {
             Vector3 temp = transform.position;
-            temp.y += 0.1f;
+            temp.y += moveSpeed;
             transform.position = temp;
 
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
             Vector3 temp = transform.position;
-            temp.y -= 0.1f;
+            temp.y -= moveSpeed;
             transform.position = temp;
 
         }
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             Vector3 temp = transform.position;
-            temp.x -= 0.1f;
+            temp.x -= moveSpeed;
             transform.position = temp;
 
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
             Vector3 temp = transform.position;
-            temp.x += 0.1f;
+            temp.x += moveSpeed;
             transform.position = temp;
 
         }

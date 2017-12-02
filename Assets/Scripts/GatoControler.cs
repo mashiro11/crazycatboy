@@ -10,8 +10,12 @@ public class GatoControler : MonoBehaviour
     [SerializeField]
     public float timeToEat;
 
+    [SerializeField]
+    public float moveSpeed;
+
     private float timeToWalkTimer;
     private float timeToEatTimer;
+    
 
     private const int window = 3;
 
@@ -21,6 +25,7 @@ public class GatoControler : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        moveSpeed = 1f;
         timeToWalk = 10f;
         timeToEat = 30f;
         timeToEatTimer = 0f;
