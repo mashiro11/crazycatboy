@@ -6,13 +6,28 @@ public class PlayerControler : MonoBehaviour {
 
     [SerializeField]
     public float moveSpeed;
+
+    [SerializeField]
+    public int maxSpeed;
+
+
     private Transform transform;
     // Use this for initialization
+    private Rigidbody2D rigidBody2D;
+    private Animator animator;
+
+    private bool facingRight;
+    private bool idle;
+    
     private GameObject room;
     void Start () {
-        moveSpeed = 1f;
-        transform = gameObject.GetComponent<Transform>();
-	}
+        facingRight = true;
+        idle = true;
+        transform = (Transform) gameObject.GetComponent<Transform>();
+        rigidBody2D = (Rigidbody2D) gameObject.GetComponent<Rigidbody2D>();
+        animator = (Animator) gameObject.GetComponent<Animator>();
+        rigidBody2D.freezeRotation = true;
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -20,36 +35,71 @@ public class PlayerControler : MonoBehaviour {
 	}
 
     void FixedUpdate()
-    { 
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            Vector3 temp = transform.position;
-            temp.y += moveSpeed;
-            transform.position = temp;
+    {
+        float moveX = Input.GetAxis("Horizontal");
+        float moveY = Input.GetAxis("Vertical");
 
+        rigidBody2D.velocity = new Vector2(moveX * maxSpeed, moveY * maxSpeed);
+        if (moveX != 0)
+        {
+            if (moveX > 0)
+            {
+                animator.SetBool("walkingUp", false);
+                animator.SetBool("walkingDown", false);
+                animator.SetBool("walkingHorizontal", true);
+                if (!facingRight)
+                {
+                    Flip();
+                }
+            }
+            else if (moveX < 0)
+            {
+                animator.SetBool("walkingUp", false);
+                animator.SetBool("walkingDown", false);
+                animator.SetBool("walkingHorizontal", true);
+                if (facingRight)
+                {
+                    Flip();
+                }
+            }
         }
-        if (Input.GetKey(KeyCode.DownArrow))
+        else
         {
-            Vector3 temp = transform.position;
-            temp.y -= moveSpeed;
-            transform.position = temp;
-
+            animator.SetBool("walkingHorizontal", false);
         }
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            Vector3 temp = transform.position;
-            temp.x -= moveSpeed;
-            transform.position = temp;
 
+        if (moveY != 0)
+        {
+            if (moveY > 0)
+            {
+                animator.SetBool("walkingHorizontal", false);
+                animator.SetBool("walkingUp", true);
+            }
+            else if (moveY < 0)
+            {
+                animator.SetBool("walkingHorizontal", false);
+                animator.SetBool("walkingUp", false);
+                animator.SetBool("walkingDown", true);
+            }
         }
-        if (Input.GetKey(KeyCode.RightArrow))
+        else
         {
-            Vector3 temp = transform.position;
-            temp.x += moveSpeed;
-            transform.position = temp;
-
+            animator.SetBool("walkingUp", false);
+            animator.SetBool("walkingDown", false);
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("Realizar ação");
         }
     }
+    void Flip()
+    {
+        facingRight = !facingRight;
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
+    }
+
     void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.name.Equals("Room"))
@@ -58,4 +108,5 @@ public class PlayerControler : MonoBehaviour {
         }
 
     }
+
 }

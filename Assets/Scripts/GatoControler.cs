@@ -40,7 +40,6 @@ public class GatoControler : MonoBehaviour
     void Update()
     {
         timeToWalkTimer += Time.deltaTime;
-        Debug.Log(timeToWalkTimer.ToString());
         if(timeToWalkTimer > timeToWalk)
         {
             animator.SetTrigger("goWalk");
