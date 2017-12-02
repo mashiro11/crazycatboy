@@ -35,13 +35,13 @@ public class GatoControler : MonoBehaviour
     void Update()
     {
         timeToWalkTimer += Time.deltaTime;
-
+        Debug.Log(timeToWalkTimer.ToString());
         if(timeToWalkTimer > timeToWalk)
         {
             animator.SetTrigger("goWalk");
             animator.SetBool("walking", true);
-            destionation.x = Random.RandomRange(-10f, 10f);
-            destionation.y = Random.RandomRange(-10f, 10f);
+            destionation.x = Random.Range(-10f, 10f);
+            destionation.y = Random.Range(-10f, 10f);
             timeToWalkTimer = 0f;
         }
         if (timeToEatTimer > timeToEat)
@@ -52,23 +52,39 @@ public class GatoControler : MonoBehaviour
 
         if (animator.GetBool("walking"))
         {
+            bool moveX = false;
+            bool moveY = false;
+
+            Debug.Log("Eu deveria estar andando");
             Transform transform = (Transform)gameObject.GetComponent<Transform>();
             Vector3 temp = transform.position;
             if(destionation.x - window > temp.x)
             {
                 temp.x += Time.deltaTime;
+                moveX = true;
             }
             else if(destionation.x + window < temp.x)
             {
                 temp.x -= Time.deltaTime;
+                moveX = true;
             }
             if (destionation.y - window > temp.y)
             {
                 temp.y += Time.deltaTime;
+                moveY = true;
             }
             else if(destionation.y + window < temp.y)
             {
                 temp.y -= Time.deltaTime;
+                moveY = true;
+            }
+            if (moveX || moveY)
+            {
+                transform.position = temp;
+            }
+            else
+            {
+                animator.SetBool("walking", false);
             }
         }
     }
