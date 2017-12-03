@@ -12,15 +12,27 @@ public class PlayerControler : MonoBehaviour {
 
 
     private Transform transform;
+
+    [SerializeField]
+    public Transform novoPote;
+
     // Use this for initialization
     private Rigidbody2D rigidBody2D;
     private Animator animator;
 
     private bool facingRight;
     private bool idle;
+
+    private bool canPutFood;
+    private bool canOpenWindow;
+
+    private GameObject poteComida;
     
     private GameObject room;
     void Start () {
+        poteComida = null;
+        canPutFood = false;
+        canOpenWindow = false;
         facingRight = true;
         idle = true;
         transform = (Transform) gameObject.GetComponent<Transform>();
@@ -89,7 +101,15 @@ public class PlayerControler : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("Realizar ação");
+            if(canPutFood) poteComida.GetComponent<PoteComida>().EnchePote();
+            if (canOpenWindow)
+            {
+                GameObject.FindGameObjectWithTag("Window").GetComponent<WindowController>().WindowToggle();
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            CompraPote();
         }
     }
     void Flip()
@@ -100,13 +120,35 @@ public class PlayerControler : MonoBehaviour {
         transform.localScale = theScale;
     }
 
-    void OnCollisionEnter2D(Collision2D other)
+    void CompraPote()
     {
-        if (other.gameObject.name.Equals("Room"))
-        {
-            Debug.Log("Colidiu");
-        }
+        GameObject.Instantiate(novoPote, new Vector3(transform.position.x + 2.2f, transform.position.y - 45f, 0f), Quaternion.identity);
+    }
 
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.name.Equals("actionSpace"))
+        {
+            canPutFood = true;
+            poteComida = other.gameObject.transform.parent.gameObject;
+            
+        }
+        if (other.gameObject.name.Equals("Window"))
+        {
+            canOpenWindow = true;
+        }
+    }
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.name.Equals("actionSpace"))
+        {
+            canPutFood = false;
+            poteComida = null;
+        }
+        if (other.gameObject.name.Equals("Window"))
+        {
+            canOpenWindow = false;
+        }
     }
 
 }

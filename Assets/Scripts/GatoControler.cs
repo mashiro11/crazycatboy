@@ -15,18 +15,30 @@ public class GatoControler : MonoBehaviour
 
     private float timeToWalkTimer;
     private float timeToEatTimer;
-    
+
+    [SerializeField]
+    public float timeToSleep =0f;
 
     private const int window = 3;
+
+    [SerializeField]
+    public bool isSleeping = false;
+
+    [SerializeField]
+    public bool goWalk = false;
+
+    [SerializeField]
+    public float timeToWake = 0f;
 
     Vector3 destionation;
 
     Animator animator;
     // Use this for initialization
+
     void Start()
     {
-        moveSpeed = 1f;
-        timeToWalk = 10f;
+        moveSpeed = 20f;
+        timeToWalk = 5f;
         timeToEat = 30f;
         timeToEatTimer = 0f;
         timeToWalkTimer = 0f;
@@ -39,14 +51,43 @@ public class GatoControler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        timeToWalkTimer += Time.deltaTime;
-        if(timeToWalkTimer > timeToWalk)
+        if (isSleeping == false)
         {
-            animator.SetTrigger("goWalk");
-            animator.SetBool("walking", true);
-            destionation.x = Random.Range(-10f, 10f);
-            destionation.y = Random.Range(-10f, 10f);
-            timeToWalkTimer = 0f;
+            timeToSleep += Time.deltaTime;
+            if (timeToSleep > 15)
+            {
+                animator.SetTrigger("timeToSleep");
+                if (Random.Range(0, 2) > 1)
+                {
+                    isSleeping = true;
+                }
+                else
+                {
+                    goWalk = true;
+                }
+                timeToSleep = 0;
+            }
+        }
+        if (isSleeping == true) {
+            timeToWake += Time.deltaTime;
+            if (timeToWake > 15) {
+                animator.SetTrigger("timeToWake");
+                isSleeping = false;
+                timeToWake = 0;
+            }
+        }
+
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") ) {
+            timeToWalkTimer += Time.deltaTime;
+            if (timeToWalkTimer > timeToWalk)
+            {
+                animator.SetTrigger("goWalk");
+                animator.SetBool("walking", true);
+                destionation.x = Random.Range(-10f, 5f);
+                destionation.y = Random.Range(-20f, 15f);
+                timeToWalkTimer = 0f;
+            }
+
         }
         if (timeToEatTimer > timeToEat)
         {
@@ -59,7 +100,6 @@ public class GatoControler : MonoBehaviour
             bool moveX = false;
             bool moveY = false;
 
-            Debug.Log("Eu deveria estar andando");
             Transform transform = (Transform)gameObject.GetComponent<Transform>();
             Vector3 temp = transform.position;
             if(destionation.x - window > temp.x)
